@@ -112,7 +112,6 @@ public abstract class MazeLogic {
         // Think of the Queue as your "to-check" list -- it stores the rooms
         // you need to look for a manticore in order of distance away from target
         Queue<Room> toCheck = new LinkedList<Room>();
-        ArrayList<Room> visited = new ArrayList<>();
         // remember, Queue is an INTERFACE -- check the API to find implementing
         // classes!
 
@@ -122,18 +121,17 @@ public abstract class MazeLogic {
 
         // We need to look at all the rooms that are 0 to maxDist moves away from target
         // The queue will help us!
-        for (int dist = 0; dist < maxDist; dist++) {
-
-            Room currentRoom = toCheck.peek();
-            if (currentRoom.getOccupant() == MANTICORE) {
-                return dist;
-            }
-            for (Room r : currentRoom.getAllConnectedRooms()) {
-                if (!visited.contains(r)) {
+        for (int dist = 0; dist <= maxDist; dist++) {
+            int size = toCheck.size();
+            for (int i = 0; i < size; i++) {
+                Room currentRoom = toCheck.remove();
+                if (currentRoom.getOccupant() == MANTICORE) {
+                    return dist;
+                }
+                for (Room r : currentRoom.getAllConnectedRooms()) {
                     toCheck.add(r);
                 }
             }
-            visited.add(toCheck.remove());
 
             // First we want to check all rooms 0 moves away from target for a manticore
             // Then all rooms 1 move away... and so on
@@ -154,6 +152,46 @@ public abstract class MazeLogic {
     // cloak and treasure, respectively, in their possession.
     // Returns null if there is no possible path to the target.
     public static String findShortestPathToObjective(Room player, boolean hasCloak, boolean hasTreasure) {
+        Queue<Room> toCheck = new LinkedList<Room>();
+        ArrayList<Room> visited = new ArrayList<>();
+        ArrayList<Room> history = new ArrayList<>();
+        ArrayList<Room> path = new ArrayList<>();
+
+        toCheck.add(player);
+        visited.add(player);
+        while (!toCheck.isEmpty()) {
+            Room currentRoom = toCheck.remove();
+            if (hasCloak && !hasTreasure) {
+                if (currentRoom.getOccupant() == TREASURE) {
+                    history.add(currentRoom);
+                    break;
+                }
+            } else if (!hasCloak) {
+                if (currentRoom.getOccupant() == CLOAK) {
+                    history.add(currentRoom);
+                    break;
+                }
+            } else if (hasCloak && hasTreasure) {
+                if (currentRoom.getOccupant() == LADDER) {
+                    history.add(currentRoom);
+                    break;
+                }
+            }
+            if (!visited.contains(currentRoom)) {
+                visited.add(currentRoom);
+                for (Room r : currentRoom.getAllConnectedRooms()) {
+                    if (!visited.contains(r) && !toCheck.contains(r)) {
+                        toCheck.add(r);
+                        visited.add(r);
+                        history.add(r);
+                    }
+                }
+            }
+        }
+
+        for (Room at = player; at != null; at = path.get(at)) {
+
+        }
 
         return null; // placeholder
     }
