@@ -1,0 +1,4 @@
+LES,   EW,  WS,
+ NS,    S, NSE, WC
+ NE, NEWS, NWM,
+  ,   NT,    ,

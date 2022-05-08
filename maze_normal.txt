@@ -1,0 +1,8 @@
+   ES,   EW,  EWS,  EWS, EWM, EWS, WS
+  NES,   LEW,  NWS,   NS,    ,  NS, NC
+   NS,     ,  NES,  NEW,  EW,  NW,
+  NES, EWSM,  NWS,     ,    ,    ,
+  NESM, NEWS, NEWS,   WS,    ,    ,
+   NE,  NEW,  NEW, NEWS, EWM, WST,
+     ,     ,     ,   NS,    ,  NS,
+     ,    E,   EW,  NEW,  EW, NEW, W
