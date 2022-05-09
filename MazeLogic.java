@@ -1,3 +1,4 @@
+import java.nio.charset.Charset;
 import java.util.*;
 
 //A collection of game logic operations necessary to the Mazes and Manticores game
@@ -153,47 +154,74 @@ public abstract class MazeLogic {
     // Returns null if there is no possible path to the target.
     public static String findShortestPathToObjective(Room player, boolean hasCloak, boolean hasTreasure) {
         Queue<Room> toCheck = new LinkedList<Room>();
-        ArrayList<Room> visited = new ArrayList<>();
-        ArrayList<Room> history = new ArrayList<>();
-        ArrayList<Room> path = new ArrayList<>();
+        HashMap<Room, Character> history = new HashMap<Room, Character>();
+
+        String path = "";
+        String path_Final = "";
 
         toCheck.add(player);
-        visited.add(player);
-        while (!toCheck.isEmpty()) {
-            Room currentRoom = toCheck.remove();
-            if (hasCloak && !hasTreasure) {
-                if (currentRoom.getOccupant() == TREASURE) {
-                    history.add(currentRoom);
-                    break;
-                }
-            } else if (!hasCloak) {
-                if (currentRoom.getOccupant() == CLOAK) {
-                    history.add(currentRoom);
-                    break;
-                }
-            } else if (hasCloak && hasTreasure) {
-                if (currentRoom.getOccupant() == LADDER) {
-                    history.add(currentRoom);
-                    break;
-                }
-            }
-            if (!visited.contains(currentRoom)) {
-                visited.add(currentRoom);
-                for (Room r : currentRoom.getAllConnectedRooms()) {
-                    if (!visited.contains(r) && !toCheck.contains(r)) {
-                        toCheck.add(r);
-                        visited.add(r);
-                        history.add(r);
+        history.put(player, null);
+        if (!hasCloak) {
+            while (!toCheck.isEmpty()) {
+                Room currentRoom = toCheck.poll();
+                for (Character c : currentRoom.getAllDoorDirections()) {
+                    if (!history.containsKey(currentRoom.go(c)) && currentRoom.go(c).getOccupant() != MANTICORE) {
+                        toCheck.add(currentRoom.go(c));
+                        history.put(currentRoom.go(c), c);
+                    }
+                    if (currentRoom.getOccupant() == CLOAK) {
+                        while (history.get(currentRoom) != null) {
+                            path += getOppositeDir(history.get(currentRoom));
+                            currentRoom = currentRoom.go(getOppositeDir(history.get(currentRoom)));
+                        }
                     }
                 }
             }
+
+            for (int i = path.length() - 1; i >= 0; i--)
+                path_Final += getOppositeDir(path.charAt(i));
+
+        } else if (hasCloak && !hasTreasure) {
+            while (!toCheck.isEmpty()) {
+                Room currentRoom = toCheck.poll();
+                for (Character c : currentRoom.getAllDoorDirections()) {
+                    if (!history.containsKey(currentRoom.go(c)) && currentRoom.go(c).getOccupant() != MANTICORE) {
+                        toCheck.add(currentRoom.go(c));
+                        history.put(currentRoom.go(c), c);
+                    }
+                    if (currentRoom.getOccupant() == TREASURE) {
+                        while (history.get(currentRoom) != null) {
+                            path += getOppositeDir(history.get(currentRoom));
+                            currentRoom = currentRoom.go(getOppositeDir(history.get(currentRoom)));
+                        }
+                    }
+                }
+            }
+            for (int i = path.length() - 1; i >= 0; i--)
+                path_Final += getOppositeDir(path.charAt(i));
+
+        } else if (hasCloak && hasTreasure) {
+            while (!toCheck.isEmpty()) {
+                Room currentRoom = toCheck.poll();
+                for (Character c : currentRoom.getAllDoorDirections()) {
+                    if (!history.containsKey(currentRoom.go(c)) && currentRoom.go(c).getOccupant() != MANTICORE) {
+                        toCheck.add(currentRoom.go(c));
+                        history.put(currentRoom.go(c), c);
+                    }
+                    if (currentRoom.getOccupant() == LADDER) {
+                        while (history.get(currentRoom) != null) {
+                            path += getOppositeDir(history.get(currentRoom));
+                            currentRoom = currentRoom.go(getOppositeDir(history.get(currentRoom)));
+                        }
+                        break;
+                    }
+                }
+            }
+            for (int i = path.length() - 1; i >= 0; i--)
+                path_Final += getOppositeDir(path.charAt(i));
         }
 
-        for (Room at = player; at != null; at = path.get(at)) {
-
-        }
-
-        return null; // placeholder
+        return path_Final;
     }
 
     // ***** HELPER FUNCTIONS *****
