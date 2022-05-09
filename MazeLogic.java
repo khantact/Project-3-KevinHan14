@@ -174,6 +174,7 @@ public abstract class MazeLogic {
                             path += getOppositeDir(history.get(currentRoom));
                             currentRoom = currentRoom.go(getOppositeDir(history.get(currentRoom)));
                         }
+                        break;
                     }
                 }
             }
@@ -185,7 +186,7 @@ public abstract class MazeLogic {
             while (!toCheck.isEmpty()) {
                 Room currentRoom = toCheck.poll();
                 for (Character c : currentRoom.getAllDoorDirections()) {
-                    if (!history.containsKey(currentRoom.go(c)) && currentRoom.go(c).getOccupant() != MANTICORE) {
+                    if (!history.containsKey(currentRoom.go(c))) {
                         toCheck.add(currentRoom.go(c));
                         history.put(currentRoom.go(c), c);
                     }
@@ -194,6 +195,7 @@ public abstract class MazeLogic {
                             path += getOppositeDir(history.get(currentRoom));
                             currentRoom = currentRoom.go(getOppositeDir(history.get(currentRoom)));
                         }
+                        break;
                     }
                 }
             }
@@ -204,7 +206,7 @@ public abstract class MazeLogic {
             while (!toCheck.isEmpty()) {
                 Room currentRoom = toCheck.poll();
                 for (Character c : currentRoom.getAllDoorDirections()) {
-                    if (!history.containsKey(currentRoom.go(c)) && currentRoom.go(c).getOccupant() != MANTICORE) {
+                    if (!history.containsKey(currentRoom.go(c))) {
                         toCheck.add(currentRoom.go(c));
                         history.put(currentRoom.go(c), c);
                     }
